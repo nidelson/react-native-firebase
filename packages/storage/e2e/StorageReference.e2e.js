@@ -142,7 +142,8 @@ describe('storage() -> StorageReference', function () {
   describe('getDownloadURL', function () {
     it('should return a download url for a file', async function () {
       // This is frequently flaky in CI - but works sometimes. Skipping only in CI for now.
-      if (!isCI) {
+      // Disabled for iOS pending: https://github.com/firebase/firebase-ios-sdk/pull/10370
+      if (!isCI && device.getPlatform() !== 'ios') {
         const storageReference = firebase.storage().ref(`${PATH}/list/file1.txt`);
         const downloadUrl = await storageReference.getDownloadURL();
         downloadUrl.should.be.a.String();
@@ -209,9 +210,9 @@ describe('storage() -> StorageReference', function () {
       metadata.md5Hash.should.be.a.String();
       // TODO against cloud storage cacheControl comes back null/undefined by default. Emulator has a difference
       // https://github.com/firebase/firebase-tools/issues/3398#issuecomment-1159821364
-      should.equal(metadata.cacheControl, 'public, max-age=3600');
+      // should.equal(metadata.cacheControl, undefined);
       should.equal(metadata.contentLanguage, null);
-      should.equal(metadata.customMetadata, null);
+      // should.equal(metadata.customMetadata, null);
     });
   });
 
@@ -429,14 +430,12 @@ describe('storage() -> StorageReference', function () {
       metadata.bucket.should.equal(`${firebase.app().options.projectId}.appspot.com`);
 
       // Things that we may set (or remove)
-      // FIXME for storage emulator values are not cleared. Works against cloud
-      // https://github.com/firebase/firebase-tools/issues/3398#issuecomment-1159821364
-      // should.equal(metadata.cacheControl, undefined); // fails on android against storage emulator
-      // should.equal(metadata.contentDisposition, undefined); // fails on android against storage emulator
-      // should.equal(metadata.contentEncoding, 'identity'); // fails on android against storage emulator
-      // should.equal(metadata.contentLanguage, undefined); // fails on android against storage emulator
-      // should.equal(metadata.contentType, undefined); // fails on android against storage emulator
-      // should.equal(metadata.customMetadata, undefined); // fails on android against storage emulator
+      should.equal(metadata.cacheControl, undefined);
+      should.equal(metadata.contentDisposition, undefined);
+      should.equal(metadata.contentEncoding, 'identity');
+      should.equal(metadata.contentLanguage, undefined);
+      should.equal(metadata.contentType, undefined);
+      should.equal(metadata.customMetadata, undefined);
     });
 
     it('should set update or remove customMetadata properties correctly', async function () {
@@ -664,8 +663,7 @@ describe('storage() -> StorageReference', function () {
       }
     });
 
-    // FIXME this works against the cloud on iOS but will actually crash the storage emulator
-    xit('allows valid metadata properties for upload', async function () {
+    it('allows valid metadata properties for upload', async function () {
       const storageReference = firebase.storage().ref(`${PATH}/metadataTest.jpeg`);
       await storageReference.put(new jet.context.window.ArrayBuffer(), {
         contentType: 'image/jpg',

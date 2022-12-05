@@ -34,7 +34,6 @@ def firebaseBomVersion = appPackageJson['sdkVersions']['android']['firebase']
 def jsonMinSdk = appPackageJson['sdkVersions']['android']['minSdk']
 def jsonTargetSdk = appPackageJson['sdkVersions']['android']['targetSdk']
 def jsonCompileSdk = appPackageJson['sdkVersions']['android']['compileSdk']
-def jsonBuildTools = appPackageJson['sdkVersions']['android']['buildTools']
 def coreVersionDetected = appPackageJson['version']
 def coreVersionRequired = packageJson['peerDependencies'][appPackageJson['name']]
 // Only log after build completed so log warning appears at the end
@@ -51,9 +50,6 @@ project.ext {
         minSdk    : jsonMinSdk,
         targetSdk : jsonTargetSdk,
         compileSdk: jsonCompileSdk,
-        // optional as gradle.buildTools comes with one by default
-        // overriding here though to match the version RN uses
-        buildTools: jsonBuildTools
       ],
 
       firebase: [
@@ -91,11 +87,11 @@ dependencies {
   api appProject
   implementation platform("com.google.firebase:firebase-bom:${ReactNative.ext.getVersion("firebase", "bom")}")
   // TODO remove the specific version once it is out of beta and participates in bom versioning
-  implementation 'com.google.firebase:firebase-appdistribution-api:16.0.0-beta03'
+  implementation 'com.google.firebase:firebase-appdistribution-api:16.0.0-beta05'
   // TODO demonstrate how to only include this in certain build variants
   // - perhaps have firebase.json name the variants to include, then roll through variants here and only
   //   add the dependency to variants that match? Or... (PRs welcome...)
-  // implementation 'com.google.firebase:firebase-appdistribution:16.0.0-beta03'
+  // implementation 'com.google.firebase:firebase-appdistribution:16.0.0-beta05'
 }
 
 ReactNative.shared.applyPackageVersion()

@@ -501,6 +501,13 @@ export namespace FirebaseMessagingTypes {
      * @platform ios iOS >= 12
      */
     PROVISIONAL = 2,
+
+    /**
+     * The app is authorized to create notifications for a limited amount of time.
+     * Used in App Clips.
+     * @platform ios iOS >= 14
+     */
+    EPHEMERAL = 3,
   }
 
   /**
@@ -626,7 +633,7 @@ export namespace FirebaseMessagingTypes {
     getToken(options?: TokenOptions): Promise<string>;
 
     /**
-     * Returns wether the root view is headless or not
+     * Returns whether the root view is headless or not
      * i.e true if the app was launched in the background (for example, by data-only cloud message)
      *
      * More info: https://rnfirebase.io/messaging/usage#background-application-state
@@ -988,6 +995,23 @@ export namespace FirebaseMessagingTypes {
      * @param topic The topic name.
      */
     unsubscribeFromTopic(topic: string): Promise<void>;
+
+    /**
+     * Sets whether message delivery metrics are exported to BigQuery is enabled or disabled.
+     *
+     * The value is false by default. Set this to true to allow exporting of message delivery metrics to BigQuery.
+     *
+     *
+     * #### Example
+     *
+     * ```js
+     * // Enable exports of message delivery metrics to BigQuery
+     * await firebase.messaging().setDeliveryMetricsExportToBigQuery(true);
+     * ```
+     *
+     * @param enabled A boolean value to enable or disable exporting of message delivery metrics to BigQuery.
+     */
+    setDeliveryMetricsExportToBigQuery(enabled: boolean): Promise<void>;
   }
 }
 

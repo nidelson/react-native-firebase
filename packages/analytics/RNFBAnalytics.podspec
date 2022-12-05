@@ -8,6 +8,8 @@ firebase_sdk_version = appPackage['sdkVersions']['ios']['firebase']
 if coreVersionDetected != coreVersionRequired
   Pod::UI.warn "NPM package '#{package['name']}' depends on '#{appPackage['name']}' v#{coreVersionRequired} but found v#{coreVersionDetected}, this might cause build issues or runtime crashes."
 end
+firebase_ios_target = appPackage['sdkVersions']['ios']['iosTarget']
+firebase_macos_target = appPackage['sdkVersions']['ios']['macosTarget']
 
 Pod::Spec.new do |s|
   s.name                = "RNFBAnalytics"
@@ -21,7 +23,8 @@ Pod::Spec.new do |s|
   s.authors             = "Invertase Limited"
   s.source              = { :git => "https://github.com/invertase/react-native-firebase.git", :tag => "v#{s.version}" }
   s.social_media_url    = 'http://twitter.com/invertaseio'
-  s.ios.deployment_target = "10.0"
+  s.ios.deployment_target = firebase_ios_target
+  s.macos.deployment_target = firebase_macos_target
   s.source_files        = 'ios/**/*.{h,m}'
 
   # React Native dependencies
@@ -44,8 +47,10 @@ Pod::Spec.new do |s|
 
     s.dependency          'Firebase/AnalyticsWithoutAdIdSupport', firebase_sdk_version
   else
-    Pod::UI.puts "#{s.name}: Using default Firebase/Analytics with Ad Ids. May require App Tracking Transparency. Not allowed for Kids apps."
-    Pod::UI.puts "#{s.name}: You may set variable `$RNFirebaseAnalyticsWithoutAdIdSupport=true` in Podfile to use analytics without ad ids."
+    if !defined?($RNFirebaseAnalyticsWithoutAdIdSupport)
+      Pod::UI.puts "#{s.name}: Using default Firebase/Analytics with Ad Ids. May require App Tracking Transparency. Not allowed for Kids apps."
+      Pod::UI.puts "#{s.name}: You may set variable `$RNFirebaseAnalyticsWithoutAdIdSupport=true` in Podfile to use analytics without ad ids."
+    end
     s.dependency          'Firebase/Analytics', firebase_sdk_version
   end
 
